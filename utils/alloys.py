@@ -281,32 +281,16 @@ def make_params_df(df):
     df['delta_e'] = delta_e_values
     return df
 
-def alloy_to_1d_tensor(alloy_str, alloy_max_len = alloy_max_len):
-    tensor = torch.zeros(alloy_max_len)
-    elements, compositions = get_elements_and_compositions(alloy_str)
-    i = 0
-    for idx in range(0, len(elements) + len(compositions), 2):
-        tensor[idx] = element_to_index(elements[i])
-        tensor[idx + 1] = compositions[i]
-        i += 1
-    return tensor
-
-def elements_to_1d_tensor(elements, element_max_len = alloy_max_len // 2):
-    tensor = torch.zeros(element_max_len)
-    for idx in range(len(elements)):
-        tensor[idx] = element_to_index(elements[idx])
-    # print(tensor)
-    return tensor
-
-def composition_to_1d_tensor(compositions, composition_max_len = alloy_max_len // 2):
-    tensor = torch.zeros(composition_max_len)
-    for idx in range(len(compositions)):
-        tensor[idx] = compositions[idx]
-    # print(tensor)
-    return tensor
-
-def tensor_to_elements(tensor):
-    elements = []
-    for idx in range(len(tensor)):
-        elements.append(index_to_element(int(tensor[idx])))
-    return elements
+def vectorization_method_1(alloy):
+    """
+    This method is a simple Tokenizer type vectorizer
+    """
+    elements, compositions = get_elements_and_compositions(alloy)
+    alloy_array = np.zeros(alloy_max_len)
+    j = 0
+    for i in range(len(elements)):
+        alloy_array[j] = element_to_index(elements[i])
+        alloy_array[j+1] = int(compositions[i])
+        j += 2
+    return alloy_array
+        

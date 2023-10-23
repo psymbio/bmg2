@@ -11,7 +11,6 @@ import random
 from tqdm import tqdm
 import datetime
 import time
-
 from PyAstronomy import pyasl
 
 import torch
@@ -136,11 +135,12 @@ TRANSFOMER_METHODS = [
     ("PowerTransformer", PowerTransformer),
 ]
 
+
 def adjusted_rsquared(r2, n, p):
     return 1 - (1 - r2) * ((n - 1) / (n - p - 1))
 
 
-def run_all_regressors(X_train, y_train, X_test, y_test):
+def run_all_regressors(X_train, X_test, y_train, y_test,):
     R2 = []
     ADJR2 = []
     RMSE = []
@@ -178,9 +178,9 @@ def run_all_regressors(X_train, y_train, X_test, y_test):
                 }
         scores = pd.DataFrame(scores)
         scores = scores.sort_values(by = "Adjusted R-Squared", ascending = False).set_index("Model")
-    display(scores[:])
+    return scores
 
-def run_all_regressors_with_transformers(X_train, y_train, X_test, y_test):
+def run_all_regressors_with_transformers(X_train, X_test, y_train, y_test, y_transform=True):
     R2 = []
     ADJR2 = []
     RMSE = []
@@ -195,8 +195,9 @@ def run_all_regressors_with_transformers(X_train, y_train, X_test, y_test):
             transformed_X_train = pd.DataFrame(X_transformer.fit_transform(X_train), columns = X_train.columns)
             transformed_X_test = pd.DataFrame(X_transformer.transform(X_test), columns = X_test.columns)
 
-            transformed_y_train = pd.DataFrame(y_transformer.fit_transform(y_train), columns = y_train.columns)
-            transformed_y_test = pd.DataFrame(y_transformer.transform(y_test), columns = y_test.columns)
+            if (y_transform == True):
+                transformed_y_train = pd.DataFrame(y_transformer.fit_transform(y_train), columns = y_train.columns)
+                transformed_y_test = pd.DataFrame(y_transformer.transform(y_test), columns = y_test.columns)
             pipe = Pipeline(steps=[
                                 ("classifier", model()),
                             ]
@@ -227,4 +228,4 @@ def run_all_regressors_with_transformers(X_train, y_train, X_test, y_test):
             }
     scores = pd.DataFrame(scores)
     scores = scores.sort_values(by = "Adjusted R-Squared", ascending = False).set_index("Model")
-    display(scores[:])
+    return scores
