@@ -293,4 +293,14 @@ def vectorization_method_1(alloy):
         alloy_array[j+1] = int(compositions[i])
         j += 2
     return alloy_array
-        
+
+def vectorization_method_2(alloy):
+    """
+    This method is a simple Tokenizer type vectorizer
+    """
+    elements, compositions = get_elements_and_compositions(alloy)
+    alloy_array = np.zeros(n_elements)
+    j = 0
+    for i in range(len(elements)):
+        alloy_array[element_to_index(elements[i])] = compositions[i]
+    return alloy_array
